@@ -1,6 +1,6 @@
 {
   "name": "@su14iman/typo3-connector",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "TYPO3-Headless Connector for Typescript",
   "keywords": [
     "typo3-connector",
