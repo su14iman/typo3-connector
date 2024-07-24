@@ -22,7 +22,7 @@
   "homepage": "https://github.ssulaiman.com/typo3-connector",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/su14iman/typo3-connector.git"
+    "url": "https://github.com/su14iman/typo3-connector.git"
   },
   "scripts": {
     "build": "tsc",
