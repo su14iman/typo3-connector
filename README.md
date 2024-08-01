@@ -1,7 +1,11 @@
 # typo3-connector
-The T3Connector class is designed to facilitate making HTTP requests to an API. It encapsulates the functionality needed to build and execute these requests in a fluent and flexible manner. 
+The T3Connector class is designed to facilitate making HTTP requests to an API. It encapsulates the functionality needed to build and execute these requests in a fluent and flexible manner.
 
-## How to use: 
+# Requirements
+- TYPO3 v11 >=
+- [friendsoftypo3/headless](https://extensions.typo3.org/extension/headless)
+
+## How to use:
 ```typescript
 import t3Connector from "@su14iman/typo3-connector";
 
@@ -11,7 +15,7 @@ connector.query()
 .get()
 .path('news')
 .cached()
-.fetch()
+.fetch<any>()
 .then((res) => {
     console.log(res['id']);
 });
@@ -59,7 +63,7 @@ connector.query()
 >to build request, **but you do not need to add it to the query, it was added to be used with tests**
 - @return **T3Connector**
 
-#### - `fetch()`
+#### - `fetch<T>()`
 >to fetch data from API
 - @return **T3Connector**
 

@@ -159,15 +159,20 @@ export default class T3Connector
     /**
      * fetch function
      * to fetch data from API
-     * @return { Promise<JSON> }
+     * @return { Promise<T> }
      */
-    public async fetch() : Promise<JSON>
+    public async fetch<T>() : Promise<T>
     {
-        let { url, options } = this.requestBuilder();
-        const response = await fetch(  url,  options );
-
-        if( response.ok ) 
-            return response.json();
-        return Promise.reject(response.statusText);
+        return new Promise<T>((resolve, reject) => {
+            let { url, options } = this.requestBuilder();
+            fetch( url, options )
+            .then((response) => {
+                if( response.ok ) return response.json();
+                reject(response.statusText);
+            })
+            .then((data) => resolve(data))
+            .catch((error) => reject(error));
+        });
     }
+
 }
