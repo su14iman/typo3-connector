@@ -1,177 +1,130 @@
 /**
  * T3-Headless T3Connector Class
  */
-export default class T3Connector
-{
-
-    /** 
-     * @var { string } apiURL - API URL
-     */
-    protected _host : string = '';
-
-    /** 
-     * @var { string } scope - Scope
-     */
-    protected _path : string = '';
-
-    /** 
-     * @var { string } uri - URI
-     */
-    protected _uri : string = '';
-
-    /** 
-     * @var { RequestInit | Object } options - Fetch options
-     */
-    private _options: RequestInit | Object = {};
+export default class T3Connector{
+    /** @var {string} host*/
+    private host : string = "";
+    /** @var {string} path */
+    private path : string = "";
+    /** @var {string} uri */
+    private uri: string = "";
+    /** @var {RequestInit | Object} options */
+    private options: RequestInit | Object = {};
 
     /**
-     * Constructor
-     * @param { string } host - API URL
-     * @param { RequestInit | null } options - Fetch options
+     * constructor
+     * @param {string} url - api url
+     * @param {RequestInit} option - fetch options
      */
-    constructor( host: string, options?: RequestInit ){
-        this._host = host.replace(/\/?$/, '/');
-        this._options = options || {};
+    constructor(url : string, option?: RequestInit){
+        this.host = url.replace(/\/?$/, '/');;
+        this.options = option || {};
     }
 
     /**
-     * query function
-     * to start new query and clear old path and old uri
-     * @return { T3Connector }
+     * cached
+     * to force cache
+     * @returns {T3Connector}
      */
-    public query() : T3Connector
-    {
-        this._path = '';
-        this._uri = '';
-        return this;
-    }
-
-    /**
-     * options function
-     * to set fetch options
-     * @param { RequestInit } options
-     * @return { T3Connector }
-     */
-    public options(options: RequestInit) : T3Connector
-    {
-        this._options = {
-            ...this._options,
-            ...options
-        }
-        return this;
-    }
-
-    /**
-     * get function
-     * to set GET method in fetch options
-     * @return { void }
-     */
-    public get() : T3Connector
-    {
-        this.options({
-            method: 'GET',
-            body: null
-        })
-        return this;
-    }
-
-    /**
-     * post function
-     * to set POST method in fetch options
-     * @return { void }
-     */
-    public post() : T3Connector
-    {
-        this.options ({
-            method: 'POST'
-        })
-        return this;
-    }
-
-    /**
-     * cached function
-     * to set cache in fetch options
-     * @return { T3Connector }
-     */
-    public cached() : T3Connector
-    {
-        this.options({
+    public cached() : T3Connector{
+        this.options = {
+            ...this.options,
             cache: 'force-cache'
-        })
+        };
         return this;
     }
 
     /**
-     * data function
-     * to set data in fetch options
-     * @param { Object } data
-     * @return { T3Connector }
+     * query
+     * to set path, uri, and options
+     * @param {string} params.path - path
+     * @param {string} params.uri - uri
+     * @param {RequestInit} params.options - options
+     * @returns {T3Connector}
      */
-    public data(data: Object) : T3Connector
-    {
-        this.options ({
-            method: 'POST',
+    public query(
+        { path, uri, options } : { path?: string, uri?: string, options?: RequestInit } = {}
+    ): T3Connector{
+        this.path = path || "";
+        this.uri = uri || "";
+        this.options = options || {};
+        return this;
+    }
+
+    /**
+     * method
+     * to set method
+     * @param {string} method - method GET | POST | PUT | DELETE
+     * @returns {T3Connector}
+     */
+    public method(method: string) : T3Connector{
+        this.options = {
+            ...this.options,
+            method: method
+        };
+        return this;
+    }
+
+    /**
+     * data
+     * to set data as JSON in body
+     * @param {Object} data - data
+     * @returns {T3Connector}
+     */
+    public data(data: Object) : T3Connector{
+        this.options = {
+            ...this.options,
             body: JSON.stringify(data),
             headers: {
                 'Content-Type': 'application/json'
             }
-        })
+        };
         return this;
     }
 
     /**
-     * path function
-     * to set path
-     * @param { string } path
-     * @return { T3Connector }
+     * requestParser
+     * to get url and options
+     * @returns {Object} { url: string, options: RequestInit }
      */
-    public path(path: string) : T3Connector
-    {
-        this._path = path.replace(/\/?$/, '/');
-        return this;
-    }
-
-    /**
-     * uri function
-     * to set uri variables
-     * @param { string } uri
-     * @return { T3Connector }
-     */
-    public uri(uri: string) : T3Connector
-    {
-        this._uri = uri;
-        return this;
-    }
-
-    /**
-     * request builder
-     * to build request
-     * @return { { url: string, options: RequestInit | null } }
-     */
-    public requestBuilder() : { url: string, options: RequestInit | null }
-    {
+    public requestParser() : {
+        url: string;
+        options: RequestInit;
+    }{
         return {
-            url: `${this._host}${this._path}${this._uri}`,
-            options: this._options
+            url: `${this.host}${this.path}${this.uri}`,
+            options: this.options
         };
     }
 
+
     /**
-     * fetch function
-     * to fetch data from API
-     * @return { Promise<T> }
+     * fetch
+     * to fetch data
+     * @returns {Promise<T>}
      */
-    public async fetch<T>() : Promise<T>
-    {
+    public fetch<T>() : Promise<T>{
         return new Promise<T>((resolve, reject) => {
-            let { url, options } = this.requestBuilder();
-            fetch( url, options )
+
+            const url = `${this.host}${this.path}${this.uri}`;
+
+            fetch(
+                url,
+                this.options
+            )
             .then((response) => {
                 if( response.ok ) return response.json();
-                reject(response.statusText);
+                reject({
+                    fetchError: {
+                        status: response.status,
+                        statusText: response.statusText,
+                        url
+                    }
+                });
             })
             .then((data) => resolve(data))
-            .catch((error) => reject(error));
+            .catch((error) => {reject(error)});
+
         });
     }
 

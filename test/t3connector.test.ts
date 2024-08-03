@@ -7,14 +7,15 @@ const connector = new T3Connector(url);
 // ----------------- Test 1 -----------------
 // Test Scope and URL for GET request
 const requestToCheckScope = connector
-.query()
-.get()
-.path('about-us/localtion')
-.requestBuilder();
+.query({
+    path: 'about-us/localtion',
+})
+.method("GET")
+.requestParser();
 
 test("Check URL and Scope", () => {
     expect(requestToCheckScope.url).toBe(
-        `${url}/about-us/localtion`.replace(/\/?$/, '/')
+        `${url}/about-us/localtion`
     );
     expect(requestToCheckScope.options?.method).toBe('GET');
 });
@@ -23,10 +24,11 @@ test("Check URL and Scope", () => {
 // ----------------- Test 2 -----------------
 // Test URL and URI for GET request
 const requestToCheckUri = connector
-.query()
-.get()
-.uri("?type=834")
-.requestBuilder();
+.query({
+    uri: '?type=834',
+})
+.method("GET")
+.requestParser();
 
 test("Check URL and URI", () => {
     expect(requestToCheckUri.url).toBe(
@@ -39,15 +41,16 @@ test("Check URL and URI", () => {
 // ----------------- Test 3 -----------------
 // Test POST request
 const requestToCheckPost = connector
-.query()
-.post()
-.path('about-us/localtion/contacts')
+.query({
+    path: 'about-us/localtion/contacts',
+})
+.method("POST")
 .data({name: 'John Doe'})
-.requestBuilder();
+.requestParser();
 
 test("Check POST request", () => {
     expect(requestToCheckPost.url).toBe(
-        `${url}/about-us/localtion/contacts/`.replace(/\/?$/, '/')
+        `${url}/about-us/localtion/contacts`
     );
     expect(requestToCheckPost.options?.method).toBe('POST');
     expect(requestToCheckPost.options?.body).toBe('{"name":"John Doe"}');

@@ -32,9 +32,12 @@ type SiteSettings = {
 
 const connector = new t3Connector(`https://headless-typo3.typo3.su14iman.local`);
 
-connector.query()
-.get()
-.uri("?type=834")
+connector.query(
+    {
+        uri: '?type=834',
+    }
+)
+.method("GET")
 .fetch<SiteSettings>()
 .then((res) => {
     console.log(

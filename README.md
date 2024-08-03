@@ -7,15 +7,16 @@ The T3Connector class is designed to facilitate making HTTP requests to an API. 
 
 ## How to use:
 ```typescript
-import t3Connector from "@su14iman/typo3-connector";
+import T3Connector from "@su14iman/typo3-connector";
 
-const connector = new t3Connector(`https://headless-typo3.typo3.su14iman.local`);
+const connector = new T3Connector(`https://headless-typo3.typo3.su14iman.local`);
 
-connector.query()
-.get()
-.path('news')
+connector.query({
+    path: "/"
+})
+.method("GET")
 .cached()
-.fetch<any>()
+.fetch<T3ContentElements[]>()
 .then((res) => {
     console.log(res['id']);
 });
@@ -23,25 +24,19 @@ connector.query()
 
 ## Functions
 
-#### - `query()`
+#### - `query({ path, uri, options } : { path?: string, uri?: string, options?: RequestInit })`
 >to start new query and clear old path and old uri <br/>
  - @return **T3Connector**
 
-#### - `options(options: RequestInit)`
->to set fetch options <br/>
-- @param  **RequestInit** options
-- @return **T3Connector**
 
-#### - `get()`
->to set GET method in fetch options <br/>
-- @return **T3Connector**
 
-#### - `post()`
->to set POST method in fetch options <br/>
-- @return **T3Connector**
 
 #### - `cached()`
 >to set cache in fetch options <br/>
+- @return **T3Connector**
+
+#### - `method(method: string)`
+> to set method - GET | POST | PUT | DELETE
 - @return **T3Connector**
 
 #### - `data(data: Object)`
@@ -49,21 +44,12 @@ connector.query()
 - @param  **Object** data
 - @return **T3Connector**
 
-#### - `path(path: string)`
->to set path <br/>
-- @param  **string** path
+
+#### - `requestParser()`
+>to parse request, **but you do not need to add it to the query, it was added to be used with tests**
 - @return **T3Connector**
 
-#### - `uri(uri: string)`
->to set uri variables <br/>
-- @param  **string** uri
-- @return **T3Connector**
-
-#### - `requestBuilder()`
->to build request, **but you do not need to add it to the query, it was added to be used with tests**
-- @return **T3Connector**
-
-#### - `fetch<T>()`
+#### - `fetch<T>(options?: RequestInit)`
 >to fetch data from API
 - @return **T3Connector**
 
